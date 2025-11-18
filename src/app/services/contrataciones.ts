@@ -272,37 +272,21 @@ async crearContratacion(contratacion: Partial<Contratacion>): Promise<{ success:
   /**
    * Cancelar una contratación (solo el usuario que la creó)
    */
-  async cancelarContratacion(id: string): Promise<{ success: boolean; error?: string }> {
-    try {
-      const currentUser = this.authService.getCurrentUser();
-      if (!currentUser) {
-        throw new Error('Usuario no autenticado');
-      }
+async cancelarContratacion(contratacionId: string) {
+  try {
+    const contratacionRef = doc(this.firestore, `Contrataciones/${contratacionId}`); // C mayúscula
 
-      // Verificar que la contratación pertenece al usuario
-      const contratacion = await this.obtenerContratacionPorId(id);
-      if (!contratacion) {
-        throw new Error('Contratación no encontrada');
-      }
+    await updateDoc(contratacionRef, {
+      estado: 'Cancelada',        // ← con "a" al final
+      canceladoEl: new Date()
+    });
 
-      if (contratacion.usuarioId !== currentUser.uid) {
-        throw new Error('No tienes permisos para cancelar esta contratación');
-      }
-
-      const contratacionDoc = doc(this.firestore, `Contrataciones/${id}`);
-      
-      await updateDoc(contratacionDoc, {
-        estado: 'Cancelada',
-        updatedAt: serverTimestamp()
-      });
-
-      console.log('Contratación cancelada:', id);
-      return { success: true };
-    } catch (error: any) {
-      console.error('Error al cancelar contratación:', error);
-      return { success: false, error: error.message };
-    }
+    return { success: true };
+  } catch (error: any) {
+    console.error('Error al cancelar:', error);
+    return { success: false, error: error.message };
   }
+}
 
   /**
    * Eliminar una contratación (solo admin)

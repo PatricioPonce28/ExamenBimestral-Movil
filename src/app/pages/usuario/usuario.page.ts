@@ -34,7 +34,7 @@ export class UsuarioPage implements OnInit {
     private contratacionesService: ContratacionesService,
     private alertController: AlertController,
     private loadingController: LoadingController,
-    private modalController: ModalController
+    private modalController: ModalController,
   ) {}
 
   ngOnInit() {
@@ -127,40 +127,41 @@ export class UsuarioPage implements OnInit {
   // VER DETALLE Y CONTRATAR PLAN
   // ============================================
 
-  async verDetallePlan(plan: PlanMovil) {
-    const alert = await this.alertController.create({
-      header: plan.nombre,
-      subHeader: `$${plan.precio.toFixed(2)} USD/mes`,
-      cssClass: 'detalle-plan-alert',
-      message: `
-        <div style="text-align: left; padding: 10px;">
-          <p style="margin-bottom: 15px;"><strong>Descripción:</strong><br>${plan.descripcion}</p>
-          <hr style="margin: 15px 0;">
-          <div style="display: grid; gap: 10px;">
-            <p><strong>📊 Datos:</strong> ${plan.datos}</p>
-            <p><strong>📞 Minutos:</strong> ${plan.minutos}</p>
-            <p><strong>💬 SMS:</strong> ${plan.sms}</p>
-            <p><strong>⚡ Velocidad:</strong> ${plan.velocidad || 'No especificado'}</p>
-          </div>
-        </div>
-      `,
-      buttons: [
-        {
-          text: 'Cerrar',
-          role: 'cancel'
-        },
-        {
-          text: 'Contratar Plan',
-          cssClass: 'btn-contratar',
-          handler: () => {
-            this.contratarPlan(plan);
-          }
-        }
-      ]
-    });
+async verDetallePlan(plan: PlanMovil) {
+  // Todo como texto plano con saltos de línea
+  const mensaje = `
+Descripción:
+${plan.descripcion} 
 
-    await alert.present();
-  }
+
+Datos:      ${plan.datos} 
+Minutos:    ${plan.minutos}
+SMS:        ${plan.sms} 
+Velocidad:  ${plan.velocidad || 'No especificada'} 
+Servicios Adicionales:
+Redes Sociales:        ${plan.redesSociales || 'No especificado'}
+  `.trim();
+
+  const alert = await this.alertController.create({
+    header: plan.nombre,
+    subHeader: `$${plan.precio.toFixed(2)} USD/mes`,
+    cssClass: 'detalle-plan-alert',
+
+    // ← Aquí va solo string normal, NUNCA dará undefined
+    message: mensaje,
+
+    buttons: [
+      { text: 'Cerrar', role: 'cancel' },
+      {
+        text: 'Contratar Plan',
+        cssClass: 'btn-contratar',
+        handler: () => this.contratarPlan(plan)
+      }
+    ]
+  });
+
+  await alert.present();
+}
 
   async contratarPlan(plan: PlanMovil) {
     const alert = await this.alertController.create({
@@ -254,7 +255,7 @@ async procesarContratacion(plan: PlanMovil, datosContratacion: any) {
       if (result.success) {
         const successAlert = await this.alertController.create({
           header: '¡Solicitud Enviada!',
-          message: `Tu solicitud para el plan <strong>${plan.nombre}</strong> ha sido enviada exitosamente. Un asesor se pondrá en contacto contigo pronto.`,
+          message: `Tu solicitud para el plan ${plan.nombre} ha sido enviada exitosamente. Un asesor se pondrá en contacto contigo pronto.`,
           buttons: [
             {
               text: 'Ver Mi Historial',

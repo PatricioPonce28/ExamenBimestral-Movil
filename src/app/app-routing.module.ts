@@ -45,11 +45,6 @@ const routes: Routes = [
     canActivate: [asesorGuard]
   },
   {
-    path: 'asesor/solicitudes',
-    loadChildren: () => import('./pages/asesor/solicitudes/solicitudes.module').then(m => m.SolicitudesPageModule),
-    canActivate: [asesorGuard]
-  },
-  {
     path: 'asesor/chat', 
     loadChildren: () => import('./pages/asesor/asesor-chat/asesor-chat.module').then(m => m.AsesorChatPageModule),
     canActivate: [asesorGuard]

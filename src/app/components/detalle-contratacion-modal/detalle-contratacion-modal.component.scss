@@ -1,0 +1,42 @@
+.modal-header {
+  text-align: center;
+  padding: 20px;
+  background: linear-gradient(135deg, #005BFF, #00C2FF);
+  color: white;
+  border-radius: 20px 20px 0 0;
+  margin: -24px -24px 20px;
+
+  h2 { margin: 0; font-size: 22px; font-weight: 700; }
+}
+
+.estado-badge {
+  margin-top: 8px;
+  font-size: 15px;
+  padding: 8px 16px;
+}
+
+.detalle-lista {
+  background: white;
+  border-radius: 16px;
+  padding: 16px;
+  margin: 16px 0;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+
+  .item {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid #f0f0f0;
+
+    &:last-child { border-bottom: none; }
+
+    strong { color: #333; font-weight: 600; }
+    span { text-align: right; color: #555; }
+    .precio { font-size: 22px; font-weight: 800; color: #005BFF; }
+    .notas { font-style: italic; }
+  }
+}
+
+.acciones {
+  margin-top: 20px;
+}

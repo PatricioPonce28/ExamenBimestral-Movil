@@ -87,3 +87,123 @@ ion-item {
   padding: 80px 20px;
   ion-spinner { width: 50px; height: 50px; }
 }
+
+.detalle-contratacion-modal {
+  --width: 90%;
+  --max-width: 420px;
+  --border-radius: 24px;
+
+  .alert-head {
+    text-align: center;
+    padding: 24px 24px 16px;
+    background: linear-gradient(135deg, #005BFF, #00C2FF);
+    color: white;
+    border-radius: 24px 24px 0 0;
+    margin: -24px -24px 20px;
+
+    .alert-title {
+      font-size: 22px;
+      font-weight: 700;
+      margin: 8px 0;
+    }
+
+    .alert-sub-title {
+      font-size: 17px;
+      opacity: 0.95;
+      font-weight: 500;
+    }
+  }
+
+  .alert-message {
+    padding: 20px 24px;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  .detalle-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    padding: 8px 0;
+  }
+
+  .item-lista {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid #f0f0f0;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    strong {
+      color: #333;
+      font-weight: 600;
+      min-width: 140px;
+    }
+
+    span {
+      text-align: right;
+      flex: 1;
+      color: #555;
+      font-weight: 500;
+    }
+
+    .precio {
+      font-size: 20px;
+      font-weight: 700;
+      color: #005BFF;
+    }
+
+    .notas {
+      font-style: italic;
+      color: #666;
+      text-align: right;
+    }
+
+    .fecha {
+      color: #888;
+      font-size: 14px;
+    }
+  }
+
+  // Estados con colores
+  .estado-pendiente {
+    background: #fff3cd;
+    color: #f39c12;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-weight: 700;
+    font-size: 14px;
+  }
+
+  .estado-contratado {
+    background: #d4edda;
+    color: #27ae60;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-weight: 700;
+    font-size: 14px;
+  }
+
+  .estado-cancelada {
+    background: #f8d7da;
+    color: #e74c3c;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-weight: 700;
+    font-size: 14px;
+  }
+
+  // Botones
+  .btn-cancelar {
+    color: #e74c3c;
+    font-weight: 600;
+  }
+
+  .btn-cerrar {
+    color: #666;
+  }
+}

@@ -4,6 +4,9 @@ import { AuthService } from 'src/app/services/auth';
 import { ContratacionesService } from 'src/app/services/contrataciones';
 import { Contratacion } from 'src/app/models/interfaces';
 import { AlertController, ActionSheetController, LoadingController } from '@ionic/angular';
+import { ModalController } from '@ionic/angular';
+import { DetalleContratacionModalComponent } from 'src/app/components/detalle-contratacion-modal/detalle-contratacion-modal.component';
+
 
 @Component({
   selector: 'app-historial',
@@ -20,7 +23,7 @@ export class HistorialPage implements OnInit {
   usuarioId: string = '';
   
   // Filtros simplificados (solo 2 estados)
-  filtroEstado: 'todos' | 'Pendiente' | 'Contratado' = 'todos';
+  filtroEstado: 'todos' | 'Cancelado' | 'Contratado' = 'todos';
   busqueda: string = '';
 
   constructor(
@@ -29,7 +32,8 @@ export class HistorialPage implements OnInit {
     private router: Router,
     private alertController: AlertController,
     private actionSheetController: ActionSheetController,
-    private loadingController: LoadingController
+    private loadingController: LoadingController,
+    private modalController: ModalController
   ) {}
 
   ngOnInit() {
@@ -125,43 +129,24 @@ export class HistorialPage implements OnInit {
   // VER DETALLE Y ACCIONES
   // ============================================
 
-  async verDetalleContratacion(contratacion: Contratacion) {
-    const alert = await this.alertController.create({
-      header: 'Detalle de Contratación',
-      subHeader: contratacion.planNombre,
-      cssClass: 'detalle-contratacion-alert',
-      message: `
-        <div style="text-align: left; padding: 10px; font-size: 14px; line-height: 1.6;">
-          <p style="margin: 8px 0;">
-            <strong>📋 Estado:</strong> 
-            <span style="color: ${this.getColorTextoEstado(contratacion.estado)}; font-weight: 600;">
-              ${contratacion.estado}
-            </span>
-          </p>
-          <p style="margin: 8px 0;">
-            <strong>💰 Precio:</strong> $${contratacion.planPrecio?.toFixed(2)}/mes
-          </p>
-          <hr style="margin: 15px 0; border: none; border-top: 1px solid #e0e0e0;">
-          
-          <p style="margin: 8px 0;"><strong>📞 Teléfono:</strong> ${contratacion.telefono || 'No especificado'}</p>
-          <p style="margin: 8px 0;"><strong>📍 Dirección:</strong> ${contratacion.direccion || 'No especificada'}</p>
-          
-          ${contratacion.notas ? `<p style="margin: 8px 0;"><strong>📝 Notas:</strong> ${contratacion.notas}</p>` : ''}
-          
-          <hr style="margin: 15px 0; border: none; border-top: 1px solid #e0e0e0;">
-          
-          ${contratacion.asesorAsignadoNombre 
-            ? `<p style="margin: 8px 0;"><strong>👤 Asesor:</strong> ${contratacion.asesorAsignadoNombre}</p>` 
-            : '<p style="margin: 8px 0; color: #999;"><em>Sin asesor asignado aún</em></p>'}
-          
-          <p style="margin: 8px 0;"><strong>📅 Fecha:</strong> ${this.formatearFecha(contratacion.createdAt)}</p>
-        </div>
-      `,
-      buttons: ['Cerrar']
-    });
+async verDetalleContratacion(contratacion: Contratacion) {
+  const modal = await this.modalController.create({
+    component: DetalleContratacionModalComponent,
+    componentProps: { contratacion },
+    cssClass: 'detalle-modal',
+    backdropDismiss: false
+  });
 
-    await alert.present();
-  }
+  modal.onDidDismiss().then((result) => {
+    if (result.data?.accion === 'cancelar') {
+      this.cancelarContratacion(contratacion);
+    } else if (result.data?.accion === 'compartir') {
+      this.compartirContratacion(contratacion);
+    }
+  });
+
+  await modal.present();
+}
 
   async mostrarOpcionesContratacion(contratacion: Contratacion) {
     const buttons: any[] = [
@@ -299,7 +284,7 @@ export class HistorialPage implements OnInit {
 
   getColorTextoEstado(estado: string): string {
     const colores: { [key: string]: string } = {
-      'Pendiente': '#f39c12',    // naranja/amarillo
+      'Cancelada': '#f39c12',    // naranja/amarillo
       'Contratado': '#27ae60'    // verde
     };
     return colores[estado] || '#666';
@@ -307,7 +292,7 @@ export class HistorialPage implements OnInit {
 
   getEstadoColor(estado: string): string {
     const colores: any = {
-      'Pendiente': 'warning',
+      'Cancelada': 'warning',
       'Contratado': 'success'
     };
     return colores[estado] || 'medium';
@@ -315,7 +300,7 @@ export class HistorialPage implements OnInit {
 
   getEstadoIcon(estado: string): string {
     const iconos: any = {
-      'Pendiente': 'time-outline',
+      'Cancelada': 'time-outline',
       'Contratado': 'checkmark-circle-outline'
     };
     return iconos[estado] || 'help-outline';
@@ -338,13 +323,13 @@ export class HistorialPage implements OnInit {
     return this.contratacionesFiltradas.length;
   }
 
-  getContratacionesPendientes(): number {
-    return this.contratacionesOriginales.filter(c => c.estado === 'Cancelada').length;
-  }
+getContratacionesCanceladas(): number {
+  return this.contratacionesOriginales.filter(c => c.estado === 'Cancelada').length;
+}
 
-  getContratacionesActivas(): number {
-    return this.contratacionesOriginales.filter(c => c.estado === 'Contratado').length;
-  }
+getContratacionesActivas(): number {
+  return this.contratacionesOriginales.filter(c => c.estado === 'Contratado').length;
+}
 
   async mostrarAlerta(titulo: string, mensaje: string) {
     const alert = await this.alertController.create({

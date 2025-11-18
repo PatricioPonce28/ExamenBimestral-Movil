@@ -685,23 +685,27 @@ async cargarContrataciones() {
 }
 
 async verDetalleContratacion(contratacion: Contratacion) {
+  // Todo en texto plano, con muchos \n para que se vea bonito
+  const mensaje = `
+Cliente:     ${contratacion.usuarioNombre}
+Email:       ${contratacion.usuarioEmail}
+Teléfono:    ${contratacion.telefono}
+Dirección:   ${contratacion.direccion}
+${contratacion.notas ? `Notas:       ${contratacion.notas}\n` : ''}
+
+Precio:      $${contratacion.planPrecio?.toFixed(2)}/mes
+Fecha:       ${this.formatearFechaContratacion(contratacion.createdAt)}
+Estado:      Contratado
+  `.trim();
+
   const alert = await this.alertController.create({
     header: 'Detalle de Contratación',
     subHeader: contratacion.planNombre,
     cssClass: 'alert-detalle-contratacion',
-    message: `
-      <div style="text-align: left; padding: 10px;">
-        <p><strong>👤 Cliente:</strong> ${contratacion.usuarioNombre}</p>
-        <p><strong>📧 Email:</strong> ${contratacion.usuarioEmail}</p>
-        <p><strong>📞 Teléfono:</strong> ${contratacion.telefono}</p>
-        <p><strong>📍 Dirección:</strong> ${contratacion.direccion}</p>
-        ${contratacion.notas ? `<p><strong>📝 Notas:</strong> ${contratacion.notas}</p>` : ''}
-        <hr style="margin: 15px 0;">
-        <p><strong>💰 Precio:</strong> $${contratacion.planPrecio?.toFixed(2)}/mes</p>
-        <p><strong>📅 Fecha:</strong> ${this.formatearFechaContratacion(contratacion.createdAt)}</p>
-        <p><strong>✅ Estado:</strong> Contratado</p>
-      </div>
-    `,
+    
+    // Solo string normal, NADA más
+    message: mensaje,
+
     buttons: ['Cerrar']
   });
 

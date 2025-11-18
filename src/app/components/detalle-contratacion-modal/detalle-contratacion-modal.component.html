@@ -1,0 +1,59 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Detalle de Contratación</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="cerrar()">Cerrar</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="modal-header">
+    <h2>{{ contratacion.planNombre }}</h2>
+    <ion-badge [color]="getEstadoColor(contratacion.estado)" class="estado-badge">
+      <ion-icon [name]="getEstadoIcon(contratacion.estado)"></ion-icon>
+      {{ contratacion.estado }}
+    </ion-badge>
+  </div>
+
+  <div class="detalle-lista">
+    <div class="item">
+      <strong>Precio mensual</strong>
+      <span class="precio">${{ contratacion.planPrecio?.toFixed(2) }}</span>
+    </div>
+    <div class="item">
+      <strong>Teléfono</strong>
+      <span>{{ contratacion.telefono || 'No especificado' }}</span>
+    </div>
+    <div class="item">
+      <strong>Dirección</strong>
+      <span>{{ contratacion.direccion || 'No especificada' }}</span>
+    </div>
+    <div class="item" *ngIf="contratacion.notas">
+      <strong>Notas</strong>
+      <span class="notas">{{ contratacion.notas }}</span>
+    </div>
+    <div class="item">
+      <strong>Asesor</strong>
+      <span>{{ contratacion.asesorAsignadoNombre || 'Sin asignar' }}</span>
+    </div>
+    <div class="item">
+      <strong>Fecha</strong>
+      <span>{{ formatearFecha(contratacion.createdAt) }}</span>
+    </div>
+  </div>
+
+  <div class="acciones" *ngIf="contratacion.estado === 'Contratado'">
+    <ion-button expand="block" color="danger" (click)="cancelar()">
+      <ion-icon name="close-circle-outline" slot="start"></ion-icon>
+      Cancelar Solicitud
+    </ion-button>
+  </div>
+
+  <div class="acciones" *ngIf="contratacion.estado === 'Contratado'">
+    <ion-button expand="block" fill="outline" (click)="compartir()">
+      <ion-icon name="share-social-outline" slot="start"></ion-icon>
+      Compartir Plan
+    </ion-button>
+  </div>
+</ion-content>

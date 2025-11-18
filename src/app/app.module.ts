@@ -16,6 +16,7 @@ import { environment } from '../environments/environment';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { SharedModule } from './shared/shared.module';
+import { DetalleContratacionModalComponent } from './components/detalle-contratacion-modal/detalle-contratacion-modal.component';
 
 
 

@@ -7,6 +7,7 @@ import { IonicModule } from '@ionic/angular';
 import { HistorialPageRoutingModule } from './historial-routing.module';
 
 import { HistorialPage } from './historial.page';
+import { DetalleContratacionModalComponent } from 'src/app/components/detalle-contratacion-modal/detalle-contratacion-modal.component';
 
 @NgModule({
   imports: [
@@ -15,6 +16,6 @@ import { HistorialPage } from './historial.page';
     IonicModule,
     HistorialPageRoutingModule
   ],
-  declarations: [HistorialPage]
+  declarations: [HistorialPage, DetalleContratacionModalComponent]
 })
 export class HistorialPageModule {}
