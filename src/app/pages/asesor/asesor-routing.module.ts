@@ -8,10 +8,6 @@ const routes: Routes = [
     path: '',
     component: AsesorPage
   },
-  {
-    path: 'gestion-planes',
-    loadChildren: () => import('./gestion-planes/gestion-planes.module').then( m => m.GestionPlanesPageModule)
-  },
 
   {
     path: 'asesor-chat',

@@ -40,11 +40,6 @@ const routes: Routes = [
     canActivate: [asesorGuard] // Solo Asesor Comercial
   },
   {
-    path: 'asesor/gestion-planes',
-    loadChildren: () => import('./pages/asesor/gestion-planes/gestion-planes.module').then(m => m.GestionPlanesPageModule),
-    canActivate: [asesorGuard]
-  },
-  {
     path: 'asesor/chat', 
     loadChildren: () => import('./pages/asesor/asesor-chat/asesor-chat.module').then(m => m.AsesorChatPageModule),
     canActivate: [asesorGuard]
