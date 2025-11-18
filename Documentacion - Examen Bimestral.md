@@ -1,0 +1,913 @@
+﻿**MovilPlans - Sistema de Gestión de Planes Móviles**
+
+Sistema web desarrollado con Ionic Angular para la gestión y contratación de planes móviles, con tres perfiles de usuario diferenciados y comunicación en tiempo real.
+
+Asesor:
+
+Email: geanotoponce95@gmail.com	
+
+Password: admin12345678
+
+Usuario\_Registrado
+
+Email: geanotoponce@gmail.com		
+
+Password: 123456789
+
+-----
+**Tabla de Contenidos**
+
+1. [Descripción del Proyecto](https://claude.ai/chat/2422236e-ba5f-4d66-83b1-7b2dbf288eb9#descripci%C3%B3n-del-proyecto)
+1. [Tecnologías Utilizadas](https://claude.ai/chat/2422236e-ba5f-4d66-83b1-7b2dbf288eb9#tecnolog%C3%ADas-utilizadas)
+1. [Arquitectura del Sistema](https://claude.ai/chat/2422236e-ba5f-4d66-83b1-7b2dbf288eb9#arquitectura-del-sistema)
+1. [Instalación y Configuración](https://claude.ai/chat/2422236e-ba5f-4d66-83b1-7b2dbf288eb9#instalaci%C3%B3n-y-configuraci%C3%B3n)
+1. [Estructura del Proyecto](https://claude.ai/chat/2422236e-ba5f-4d66-83b1-7b2dbf288eb9#estructura-del-proyecto)
+1. [Perfiles de Usuario](https://claude.ai/chat/2422236e-ba5f-4d66-83b1-7b2dbf288eb9#perfiles-de-usuario)
+1. [Funcionalidades Principales](https://claude.ai/chat/2422236e-ba5f-4d66-83b1-7b2dbf288eb9#funcionalidades-principales)
+1. [Base de Datos (Firestore)](https://claude.ai/chat/2422236e-ba5f-4d66-83b1-7b2dbf288eb9#base-de-datos-firestore)
+1. [Reglas de Seguridad](https://claude.ai/chat/2422236e-ba5f-4d66-83b1-7b2dbf288eb9#reglas-de-seguridad)
+1. [Servicios Implementados](https://claude.ai/chat/2422236e-ba5f-4d66-83b1-7b2dbf288eb9#servicios-implementados)
+1. [Componentes Compartidos](https://claude.ai/chat/2422236e-ba5f-4d66-83b1-7b2dbf288eb9#componentes-compartidos)
+1. [Gestión de Imágenes](https://claude.ai/chat/2422236e-ba5f-4d66-83b1-7b2dbf288eb9#gesti%C3%B3n-de-im%C3%A1genes)
+1. [Sistema de Estados](https://claude.ai/chat/2422236e-ba5f-4d66-83b1-7b2dbf288eb9#sistema-de-estados)
+1. [Comandos Útiles](https://claude.ai/chat/2422236e-ba5f-4d66-83b1-7b2dbf288eb9#comandos-%C3%BAtiles)
+-----
+**Descripción del Proyecto**
+
+MovilPlans es una aplicación web que permite la gestión completa de planes móviles con tres tipos de usuarios:
+
+- **Asesor Comercial**: Gestión completa de planes (CRUD), atención de solicitudes y chat con clientes
+- **Usuario Registrado**: Visualización de catálogo, contratación de planes, chat con asesores e historial
+- **Usuario no Registrado**: Visualización de catálogo
+-----
+**Tecnologías Utilizadas**
+
+**Frontend**
+
+- **Ionic 7** - Framework híbrido
+- **Angular 17** - Framework JavaScript
+- **TypeScript** - Lenguaje de programación
+- **SCSS** - Preprocesador CSS
+
+**Backend y Servicios**
+
+- **Firebase Authentication** - Autenticación de usuarios
+- **Cloud Firestore** - Base de datos NoSQL
+- **Cloudinary** - Gestión y optimización de imágenes
+
+**Herramientas de Desarrollo**
+
+- **Ionic CLI** - Herramienta de línea de comandos
+- **Angular CLI** - Generación de componentes y servicios
+- **Git** - Control de versiones
+-----
+**Arquitectura del Sistema**
+
+┌─────────────────────────────────────────────────────┐
+
+│                   FRONTEND (Ionic)                   │
+
+│  ┌──────────┐  ┌──────────┐  ┌──────────────────┐  │
+
+│  │  Login   │  │ Registro │  │ Recuperar Pass   │  │
+
+│  └──────────┘  └──────────┘  └──────────────────┘  │
+
+│                                                      │
+
+│  ┌──────────────────────────────────────────────┐  │
+
+│  │            Catálogo (Público)                │  │
+
+│  └──────────────────────────────────────────────┘  │
+
+│                                                      │
+
+│  ┌─────────────────┐      ┌──────────────────────┐ │
+
+│  │     Asesor      │      │ Usuario Registrado   │ │
+
+│  │  - CRUD Planes  │      │ - Ver Catálogo       │ │
+
+│  │  - Solicitudes  │      │ - Contratar Planes   │ │
+
+│  │  - Chat         │      │ - Chat con Asesor    │ │
+
+│  └─────────────────┘      │ - Historial          │ │
+
+│                            └──────────────────────┘ │
+
+└─────────────────────────────────────────────────────┘
+
+`                         `│
+
+`                         `▼
+
+┌─────────────────────────────────────────────────────┐
+
+│              FIREBASE SERVICES                       │
+
+│  ┌──────────────┐  ┌──────────────┐  ┌───────────┐ │
+
+│  │     Auth     │  │   Firestore  │  │  Storage  │ │
+
+│  └──────────────┘  └──────────────┘  └───────────┘ │
+
+└─────────────────────────────────────────────────────┘
+
+-----
+**Instalación y Configuración**
+
+**Prerrequisitos**
+
+- Node.js (v16 o superior)
+- npm (v8 o superior)
+- Ionic CLI
+- Cuenta de Firebase
+- Cuenta de Cloudinary (opcional)
+
+**Pasos de Instalación**
+
+1. **Clonar el repositorio**
+
+git clone <url-del-repositorio>
+
+cd ExamenBimestral1
+
+2. **Instalar dependencias**
+
+npm install
+
+3. **Instalar Angular Fire**
+
+npm install @angular/fire firebase
+
+4. **Configurar Firebase**
+
+Crear el archivo src/environments/environment.ts:
+
+export const environment = {
+
+`  `production: false,
+
+`  `firebaseConfig: {
+
+`    `apiKey: "TU\_API\_KEY",
+
+`    `authDomain: "tu-proyecto.firebaseapp.com",
+
+`    `projectId: "tu-proyecto-id",
+
+`    `storageBucket: "tu-proyecto.appspot.com",
+
+`    `messagingSenderId: "123456789",
+
+`    `appId: "1:123456789:web:abcdef123456"
+
+`  `}
+
+};
+
+5. **Configurar Firebase en app.module.ts**
+
+El archivo ya está configurado con los providers necesarios para Auth, Firestore y Storage.
+
+6. **Ejecutar la aplicación**
+
+ionic serve
+
+-----
+**Estructura del Proyecto**
+
+src/app/
+
+├── components/
+
+│   └── image-viewer/          # Componente para visualizar imágenes
+
+│       ├── image-viewer.component.ts
+
+│       ├── image-viewer.component.html
+
+│       └── image-viewer.component.scss
+
+│
+
+├── guards/
+
+│   ├── auth.guard.ts           # Guard de autenticación general
+
+│   ├── asesor.guard.ts         # Guard para Asesor Comercial
+
+│   ├── usuario-registrado.guard.ts  # Guard para Usuario Registrado
+
+│   └── publico.guard.ts        # Guard para rutas públicas
+
+│
+
+├── models/
+
+│   └── interfaces.ts           # Interfaces TypeScript
+
+│
+
+├── pages/
+
+│   ├── home/                   # Login
+
+│   ├── registro/               # Registro de usuarios
+
+│   ├── recuperar-password/     # Recuperación de contraseña
+
+│   ├── catalogo/               # Catálogo público de planes
+
+│   ├── asesor/                 # Dashboard del asesor
+
+│   ├── usuario/                # Dashboard del usuario
+
+│   │   └── historial/          # Historial de contrataciones
+
+│   └── chat/                   # Chat en tiempo real
+
+│
+
+├── services/
+
+│   ├── auth.service.ts         # Servicio de autenticación
+
+│   ├── planes.service.ts       # Servicio de gestión de planes
+
+│   ├── contrataciones.service.ts  # Servicio de contrataciones
+
+│   └── chat.service.ts         # Servicio de chat (pendiente)
+
+│
+
+└── shared/
+
+`    `└── shared.module.ts        # Módulo de componentes compartidos
+
+-----
+**Perfiles de Usuario**
+
+**1. Asesor Comercial**
+
+**Funcionalidades:**
+
+- Gestión completa de planes móviles (Crear, Leer, Actualizar, Eliminar)
+- Subida de imágenes promocionales (hasta 5MB)
+- Visualización y gestión de solicitudes de contratación
+- Cambio de estado de solicitudes (Pendiente → Contratado / Cancelado)
+- Chat en tiempo real con usuarios registrados
+- Filtrado y búsqueda de planes
+
+**Acceso:** Requiere código de administrador para registro
+
+**2. Usuario Registrado**
+
+**Funcionalidades:**
+
+- Visualización del catálogo completo de planes activos
+- Contratación de planes móviles
+- Chat en tiempo real con asesores
+- Historial de contrataciones con filtros
+- Cancelación de solicitudes pendientes
+- Búsqueda y filtrado de planes
+
+**Acceso:** Registro libre con email y contraseña
+
+**3. Usuario Invitado (No autenticado)**
+
+**Funcionalidades:**
+
+- Visualización del catálogo de planes (solo lectura)
+- Búsqueda y filtrado de planes
+- Ver detalles de planes
+
+**Limitaciones:**
+
+- No puede contratar planes
+- No tiene acceso al chat
+- No puede guardar información
+-----
+**Funcionalidades Principales**
+
+**Autenticación y Autorización**
+
+**Sistema de Login**
+
+- Validación de email y contraseña
+- Redirección automática según rol
+- Recuperación de contraseña por email
+- Registro con asignación automática de rol
+
+**Guards Implementados**
+
+- AuthGuard: Verifica autenticación general
+- AsesorGuard: Solo permite acceso a Asesor Comercial
+- UsuarioRegistradoGuard: Solo permite acceso a Usuario Registrado
+- PublicoGuard: Redirige usuarios autenticados
+
+**Gestión de Planes (CRUD)**
+
+**Crear Plan**
+
+// Campos requeridos
+
+\- nombre: string
+
+\- descripcion: string
+
+\- precio: number
+
+\- datos: string (Ej: "5GB", "10GB", "Ilimitado")
+
+\- minutos: string (Ej: "100 min", "Ilimitado")
+
+\- sms: string (Ej: "100 SMS", "Ilimitados")
+
+\- velocidad: string (Ej: "4G", "5G")
+
+\- imagenUrl: string (opcional)
+
+\- destacado: boolean
+
+\- activo: boolean
+
+**Funcionalidades**
+
+- Creación de planes con validaciones
+- Edición de planes existentes
+- Eliminación con confirmación
+- Activar/Desactivar planes
+- Subida y gestión de imágenes
+
+**Sistema de Contrataciones**
+
+**Estados de Contratación**
+
+- Pendiente: Solicitud inicial
+- Cancelado: Solicitud cancelada (solo desde Pendiente)
+
+**Datos de Contratación**
+
+{
+
+`  `planId: string,
+
+`  `planNombre: string,
+
+`  `planPrecio: number,
+
+`  `usuarioId: string,
+
+`  `usuarioNombre: string,
+
+`  `usuarioEmail: string,
+
+`  `estado: 'Contratado' | 'Cancelado',
+
+`  `telefono: string,
+
+`  `direccion: string,
+
+`  `notas: string,
+
+`  `asesorAsignadoId: string,
+
+`  `asesorAsignadoNombre: string,
+
+`  `createdAt: Timestamp,
+
+`  `updatedAt: Timestamp
+
+}
+
+**Catálogo de Planes**
+
+**Filtros Disponibles**
+
+- Búsqueda por texto (nombre, descripción, datos, minutos)
+- Filtro por velocidad (Todos, 4G, 5G)
+- Ordenamiento: 
+  - Por destacado
+  - Por precio (ascendente/descendente)
+  - Por nombre (alfabético)
+
+**Visualización**
+
+- Grid responsivo (1-3 columnas según dispositivo)
+- Cards con imagen, precio y características
+- Imagen clickeable con visor fullscreen
+- Badge de "Destacado" en planes especiales
+-----
+**Base de Datos (Firestore)**
+
+**Colecciones**
+
+**Usuarios**
+
+Colección: Usuarios
+
+Documento ID: {uid}
+
+Campos:
+
+\- uid: string
+
+\- email: string
+
+\- displayName: string
+
+\- rol: 'Asesor Comercial' | 'Usuario Registrado'
+
+\- emailVerified: boolean
+
+\- activo: boolean
+
+\- createdAt: Timestamp
+
+\- updatedAt: Timestamp
+
+**Planes\_Moviles**
+
+Colección: Planes\_Moviles
+
+Documento ID: Auto-generado
+
+Campos:
+
+\- nombre: string
+
+\- descripcion: string
+
+\- precio: number
+
+\- datos: string
+
+\- minutos: string
+
+\- sms: string
+
+\- velocidad: string
+
+\- imagenUrl: string
+
+\- destacado: boolean
+
+\- activo: boolean
+
+\- asesorId: string
+
+\- createdAt: Timestamp
+
+\- updatedAt: Timestamp
+
+**Contrataciones**
+
+Colección: Contrataciones
+
+Documento ID: Auto-generado
+
+Campos:
+
+\- planId: string
+
+\- planNombre: string
+
+\- planPrecio: number
+
+\- usuarioId: string
+
+\- usuarioNombre: string
+
+\- usuarioEmail: string
+
+\- estado: string
+
+\- telefono: string
+
+\- direccion: string
+
+\- notas: string
+
+\- asesorAsignadoId: string
+
+\- asesorAsignadoNombre: string
+
+\- createdAt: Timestamp
+
+\- updatedAt: Timestamp
+
+**Mensajes\_Chat (Futura implementación)**
+
+Colección: Mensajes\_Chat
+
+Documento ID: Auto-generado
+
+Campos:
+
+\- remitenteId: string
+
+\- remitenteNombre: string
+
+\- remitenteRol: string
+
+\- destinatarioId: string
+
+\- destinatarioNombre: string
+
+\- mensaje: string
+
+\- leido: boolean
+
+\- contratacionId: string (opcional)
+
+\- createdAt: Timestamp
+
+-----
+**Reglas de Seguridad**
+
+**Firestore Rules**
+
+Las reglas implementadas garantizan:
+
+**Usuarios**
+
+- Lectura: Usuario autenticado puede leer su propio perfil o si es asesor
+- Creación: Solo durante registro, con validación de campos
+- Actualización: Solo el propio usuario, sin cambiar rol
+- Eliminación: No permitida
+
+**Planes\_Moviles**
+
+- Lectura: Todos pueden leer planes activos, asesores ven todos
+- Creación: Solo asesores
+- Actualización: Solo asesores
+- Eliminación: Solo asesores
+
+**Contrataciones**
+
+- Lectura: Usuario ve sus propias contrataciones, asesor ve todas
+- Creación: Solo usuarios registrados
+- Actualización: Solo asesores (cambio de estado)
+- Eliminación: No permitida
+
+**Mensajes\_Chat**
+
+- Lectura: Participantes del chat
+- Creación: Usuarios autenticados
+- Actualización: Solo marcar como leído por destinatario
+- Eliminación: No permitida
+
+**Storage Rules**
+
+**Carpeta planes-imagenes/**
+
+- Lectura: Todos (público)
+- Escritura: Solo asesores
+- Tamaño máximo: 5MB
+- Formatos permitidos: JPG, JPEG, PNG
+-----
+**Servicios Implementados**
+
+**AuthService**
+
+**Métodos principales:**
+
+login(email, password): Promise<{success, rol, error}>
+
+logout(): Promise<void>
+
+registrarUsuario(email, password, displayName): Promise<{success, uid, error}>
+
+registrarAsesor(email, password, displayName, codigoAdmin): Promise<{success, uid, error}>
+
+resetPassword(email): Promise<{success, error}>
+
+getUserRole(): Promise<string | null>
+
+isAuthenticated(): boolean
+
+getCurrentUser(): User | null
+
+getUserData(): {uid, email, displayName}
+
+**Características:**
+
+- Observador de estado de autenticación
+- Redirección automática según rol
+- Validación de código de administrador para asesores
+- Gestión de sesión con BehaviorSubject
+
+**PlanesService**
+
+**Métodos principales:**
+
+crearPlan(plan, imagen?): Promise<{success, id, error}>
+
+obtenerPlanes(): Promise<PlanMovil[]>
+
+obtenerPlanesActivos(): Promise<PlanMovil[]>
+
+obtenerPlanPorId(id): Promise<PlanMovil | null>
+
+actualizarPlan(id, plan, nuevaImagen?): Promise<{success, error}>
+
+eliminarPlan(id, imagenUrl?): Promise<{success, error}>
+
+toggleEstadoPlan(id, activo): Promise<{success, error}>
+
+**Características:**
+
+- Gestión automática de imágenes en Storage
+- Validación de tamaño (5MB) y formato (JPG, PNG)
+- Eliminación de imagen antigua al actualizar
+- Timestamping automático
+
+**ContratacionesService**
+
+**Métodos principales:**
+
+crearContratacion(contratacion): Promise<{success, id, error}>
+
+obtenerContratacionesPorUsuario(usuarioId): Promise<Contratacion[]>
+
+obtenerTodasContrataciones(): Promise<Contratacion[]>
+
+actualizarEstadoContratacion(id, estado, asesorId?, asesorNombre?): Promise<{success, error}>
+
+cancelarContratacion(id): Promise<{success, error}>
+
+**Características:**
+
+- Estados controlados (Pendiente, Contratado, Cancelado)
+- Desnormalización de datos para consultas rápidas
+- Asignación de asesor en cambios de estado
+- Validaciones de transiciones de estado
+-----
+**Componentes Compartidos**
+
+**ImageViewerComponent**
+
+Componente reutilizable para visualización de imágenes en pantalla completa.
+
+**Ubicación:** src/app/components/image-viewer/
+
+**Props:**
+
+@Input() imageUrl: string
+
+@Input() title: string
+
+@Input() subtitle: string
+
+**Funcionalidades:**
+
+- Zoom in/out (25% por paso)
+- Rango de zoom: 1x a 3x
+- Botón de compartir (si está disponible)
+- Botón de descarga
+- Interfaz de usuario con controles táctiles
+- Diseño fullscreen con backdrop oscuro
+
+**Uso:**
+
+// 1. Importar SharedModule en el módulo de la página
+
+import { SharedModule } from '../../shared/shared.module';
+
+// 2. Agregar a imports del módulo
+
+imports: [
+
+`  `CommonModule,
+
+`  `FormsModule,
+
+`  `IonicModule,
+
+`  `SharedModule
+
+]
+
+// 3. Usar en el componente
+
+async verImagen(url: string, titulo: string) {
+
+`  `const modal = await this.modalController.create({
+
+`    `component: ImageViewerComponent,
+
+`    `componentProps: {
+
+`      `imageUrl: url,
+
+`      `title: titulo,
+
+`      `subtitle: 'Descripción'
+
+`    `},
+
+`    `cssClass: 'fullscreen-modal'
+
+`  `});
+
+`  `await modal.present();
+
+}
+
+**SharedModule**
+
+Módulo que exporta componentes reutilizables en toda la aplicación.
+
+**Componentes incluidos:**
+
+- ImageViewerComponent
+
+**Módulos exportados:**
+
+- CommonModule
+- FormsModule
+- IonicModule
+-----
+**Gestión de Imágenes**
+
+**Cloudinary (Alternativa)**
+
+Cloudinary puede ser usado como alternativa o complemento a para:
+
+- Optimización automática de imágenes
+- Transformaciones en tiempo real
+- CDN global para mejor rendimiento
+- Gestión avanzada de metadatos
+- Backup automático
+
+**Configuración básica:**
+
+// En environment.ts
+
+cloudinary: {
+
+`  `cloudName: 'tu-cloud-name',
+
+`  `apiKey: 'tu-api-key',
+
+`  `apiSecret: 'tu-api-secret'
+
+}
+
+// Uso en servicio
+
+uploadToCloudinary(file: File): Promise<string> {
+
+`  `const formData = new FormData();
+
+`  `formData.append('file', file);
+
+`  `formData.append('upload\_preset', 'preset-name');
+
+
+
+`  `return fetch(`https://api.cloudinary.com/v1\_1/${cloudName}/image/upload`, {
+
+`    `method: 'POST',
+
+`    `body: formData
+
+`  `})
+
+.then(res => res.json())
+
+.then(data => data.secure\_url);
+
+}
+
+-----
+**Interfaces TypeScript**
+
+Las interfaces definen la estructura de datos en toda la aplicación.
+
+**Ubicación:** src/app/models/interfaces.ts
+
+**Propósito:**
+
+- Tipado fuerte en TypeScript
+- Autocompletado en IDE
+- Prevención de errores en tiempo de compilación
+- Documentación implícita del código
+- Facilita refactorización
+- Mejora la mantenibilidad
+
+**Interfaces principales:**
+
+- Usuario: Estructura de usuarios del sistema
+- PlanMovil: Estructura de planes móviles
+- Contratacion: Estructura de solicitudes de contratación
+- MensajeChat: Estructura de mensajes (futura implementación)
+- Consulta: Estructura de consultas de invitados
+- Conversacion: Agrupación de mensajes por conversación
+-----
+**Comandos Útiles**
+
+**Desarrollo**
+
+\# Iniciar servidor de desarrollo
+
+ionic serve
+
+\# Compilar para producción
+
+ionic build --prod
+
+\# Ejecutar en dispositivo Android
+
+ionic capacitor run android
+
+\# Ejecutar en dispositivo iOS
+
+ionic capacitor run ios
+
+\# Ejecutar tests
+
+npm test
+
+**Generación de Componentes**
+
+\# Generar página
+
+ionic generate page pages/nombre-pagina
+
+\# Generar servicio
+
+ionic generate service services/nombre-servicio
+
+\# Generar componente
+
+ionic generate component components/nombre-componente
+
+\# Generar guard
+
+ionic generate guard guards/nombre-guard
+
+\# Generar módulo
+
+ng generate module shared
+
+**Firebase**
+
+\# Instalar Firebase
+
+npm install firebase @angular/fire
+
+\# Desplegar reglas de Firestore
+
+firebase deploy --only firestore:rules
+
+\# Desplegar reglas de Storage
+
+firebase deploy --only storage
+
+\# Ver logs en tiempo real
+
+firebase functions:log
+
+**Gestión de Dependencias**
+
+\# Instalar todas las dependencias
+
+npm install
+
+\# Actualizar dependencias
+
+npm update
+
+\# Verificar versiones
+
+npm outdated
+
+\# Instalar dependencia específica
+
+npm install nombre-paquete
+
+\# Desinstalar dependencia
+
+npm uninstall nombre-paquete
+
+**Notas Importantes**
+
+**Seguridad**
+
+- Nunca subir credenciales de Firebase al repositorio
+- Usar variables de entorno para datos sensibles
+- Cambiar código de administrador en producción
+- Revisar periódicamente las reglas de seguridad
+- Implementar rate limiting en funciones críticas
+
+**Rendimiento**
+
+- Imágenes optimizadas gracias a Cloudinary.
+- Lazy loading de módulos
+- Caché de consultas frecuentes
+- Paginación en listas grandes
+- Compresión de assets en producción
