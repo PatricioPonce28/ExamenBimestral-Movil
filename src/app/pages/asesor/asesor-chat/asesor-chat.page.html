@@ -1,0 +1,40 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-back-button slot="start" defaultHref="/asesor"></ion-back-button>
+    <ion-title>Chat con {{ usuarioNombre || 'Cliente' }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content #content class="chat-content">
+  <div class="mensajes-container">
+    <div *ngFor="let msg of mensajes" class="mensaje" [class.mio]="msg.uid === miUid">
+      <div class="burbuja" [class.mio]="msg.uid === miUid">
+        <p class="texto">{{ msg.mensaje }}</p>
+        <small class="hora">{{ msg.fecha | date:'shortTime' }}</small>
+      </div>
+    </div>
+
+    <div class="empty-state" *ngIf="mensajes.length === 0">
+      <ion-icon name="chatbubbles-outline" size="large" color="medium"></ion-icon>
+      <p>Aún no hay mensajes</p>
+    </div>
+  </div>
+</ion-content>
+
+<ion-footer>
+  <ion-toolbar>
+    <ion-textarea 
+      [(ngModel)]="nuevoMensaje" 
+      placeholder="Escribir respuesta..." 
+      rows="1" 
+      auto-grow="true"
+      (keyup.enter)="enviar()">
+    </ion-textarea>
+    
+    <ion-buttons slot="end">
+      <ion-button (click)="enviar()" [disabled]="!nuevoMensaje?.trim()">
+        <ion-icon name="send" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-footer>

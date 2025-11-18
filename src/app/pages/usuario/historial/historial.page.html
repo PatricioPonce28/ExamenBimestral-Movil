@@ -1,0 +1,199 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/usuario"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Mi Historial</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  
+  <!-- Bienvenida con estadísticas -->
+  <div class="welcome-section">
+    <div class="welcome-header">
+      <ion-icon name="documents-outline" class="welcome-icon"></ion-icon>
+      <div class="welcome-text">
+        <h2>Hola, {{ usuarioNombre }} 👋</h2>
+        <p>Aquí están tus solicitudes de planes</p>
+      </div>
+    </div>
+
+    <!-- Estadísticas rápidas -->
+    <div class="stats-grid" *ngIf="!cargando && contratacionesOriginales.length > 0">
+      <div class="stat-card pending">
+        <ion-icon name="time-outline"></ion-icon>
+        <div class="stat-info">
+          <h3>{{ getContratacionesPendientes() }}</h3>
+          <p>Pendiente{{ getContratacionesPendientes() !== 1 ? 's' : '' }}</p>
+        </div>
+      </div>
+      <div class="stat-card active">
+        <ion-icon name="checkmark-circle-outline"></ion-icon>
+        <div class="stat-info">
+          <h3>{{ getContratacionesActivas() }}</h3>
+          <p>Contratado{{ getContratacionesActivas() !== 1 ? 's' : '' }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Búsqueda -->
+  <div class="search-container" *ngIf="!cargando && contratacionesOriginales.length > 0">
+    <ion-searchbar 
+      [(ngModel)]="busqueda" 
+      (ionInput)="aplicarFiltros()" 
+      placeholder="Buscar por plan o asesor..." 
+      mode="ios"
+      animated="true">
+    </ion-searchbar>
+  </div>
+
+  <!-- Filtro de estado (solo 2 opciones) -->
+  <div class="filter-section" *ngIf="!cargando && contratacionesOriginales.length > 0">
+    <ion-segment 
+      [(ngModel)]="filtroEstado" 
+      (ionChange)="cambiarFiltroEstado($any($event.detail.value))" 
+      mode="ios"
+      class="estado-segment">
+      <ion-segment-button value="todos">
+        <ion-label>Todos</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="Pendiente">
+        <ion-icon name="time-outline"></ion-icon>
+        <ion-label>Cancelados</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="Contratado">
+        <ion-icon name="checkmark-circle-outline"></ion-icon>
+        <ion-label>Contratados</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+  </div>
+
+  <!-- Contador de resultados -->
+  <div class="results-count" *ngIf="!cargando && contratacionesFiltradas.length > 0">
+    <ion-text color="medium">
+      <small>{{ getTotalContrataciones() }} resultado{{ getTotalContrataciones() !== 1 ? 's' : '' }}</small>
+    </ion-text>
+  </div>
+
+  <!-- Loading -->
+  <div class="loading-container" *ngIf="cargando">
+    <ion-spinner name="crescent" color="primary"></ion-spinner>
+    <p>Cargando tu historial...</p>
+  </div>
+
+  <!-- Refresher -->
+  <ion-refresher slot="fixed" (ionRefresh)="refrescar($event)">
+    <ion-refresher-content 
+      pullingIcon="chevron-down-circle-outline"
+      pullingText="Desliza para actualizar"
+      refreshingSpinner="crescent">
+    </ion-refresher-content>
+  </ion-refresher>
+
+  <!-- Lista de contrataciones con diseño mejorado -->
+  <div class="contrataciones-list" *ngIf="!cargando && contratacionesFiltradas.length > 0">
+    <ion-card *ngFor="let c of contratacionesFiltradas" class="contratacion-card" button (click)="mostrarOpcionesContratacion(c)">
+      <ion-card-content>
+        
+        <!-- Header de la card -->
+        <div class="card-header">
+          <ion-badge [color]="getEstadoColor(c.estado)" class="estado-badge">
+            <ion-icon [name]="getEstadoIcon(c.estado)"></ion-icon>
+            {{ c.estado }}
+          </ion-badge>
+          <ion-icon name="chevron-forward-outline" color="medium"></ion-icon>
+        </div>
+
+        <!-- Contenido principal -->
+        <div class="card-body">
+          <h3 class="plan-nombre">{{ c.planNombre }}</h3>
+          
+          <div class="plan-info">
+            <div class="info-item">
+              <ion-icon name="cash-outline" color="primary"></ion-icon>
+              <span><strong>${{ c.planPrecio?.toFixed(2) }}</strong>/mes</span>
+            </div>
+            
+            <div class="info-item">
+              <ion-icon name="calendar-outline" color="medium"></ion-icon>
+              <span>{{ formatearFecha(c.createdAt) }}</span>
+            </div>
+
+            <div class="info-item" *ngIf="c.asesorAsignadoNombre">
+              <ion-icon name="person-outline" color="tertiary"></ion-icon>
+              <span>{{ c.asesorAsignadoNombre }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Acciones rápidas -->
+        <div class="card-actions">
+          <ion-button fill="clear" size="small" (click)="verDetalleContratacion(c); $event.stopPropagation()">
+            <ion-icon name="eye-outline" slot="start"></ion-icon>
+            Ver Detalle
+          </ion-button>
+          
+          <ion-button 
+            fill="clear" 
+            size="small" 
+            color="danger"
+            *ngIf="c.estado === 'Cancelada'"
+            (click)="cancelarContratacion(c); $event.stopPropagation()">
+            <ion-icon name="close-circle-outline" slot="start"></ion-icon>
+            Cancelar
+          </ion-button>
+
+          <ion-button 
+            fill="clear" 
+            size="small" 
+            color="tertiary"
+            *ngIf="c.asesorAsignadoId"
+            (click)="contactarAsesor(c); $event.stopPropagation()">
+            <ion-icon name="chatbubbles-outline" slot="start"></ion-icon>
+            Chat
+          </ion-button>
+        </div>
+
+      </ion-card-content>
+    </ion-card>
+  </div>
+
+  <!-- Estado vacío mejorado -->
+  <div class="empty-state" *ngIf="!cargando && contratacionesFiltradas.length === 0">
+    <div class="empty-icon-container">
+      <ion-icon name="documents-outline" class="empty-icon"></ion-icon>
+    </div>
+    
+    <h3>{{ busqueda || filtroEstado !== 'todos' ? 'No hay resultados' : 'Sin solicitudes aún' }}</h3>
+    
+    <p *ngIf="busqueda || filtroEstado !== 'todos'">
+      Intenta cambiar los filtros de búsqueda
+    </p>
+    <p *ngIf="!busqueda && filtroEstado === 'todos'">
+      Explora nuestro catálogo y encuentra el plan perfecto para ti
+    </p>
+
+    <div class="empty-actions">
+      <ion-button 
+        expand="block" 
+        fill="solid"
+        (click)="volverACatalogo()"
+        *ngIf="!busqueda && filtroEstado === 'todos'">
+        <ion-icon name="search-outline" slot="start"></ion-icon>
+        Explorar Planes
+      </ion-button>
+
+      <ion-button 
+        expand="block" 
+        fill="outline"
+        (click)="limpiarBusqueda(); cambiarFiltroEstado('todos')"
+        *ngIf="busqueda || filtroEstado !== 'todos'">
+        <ion-icon name="refresh-outline" slot="start"></ion-icon>
+        Limpiar Filtros
+      </ion-button>
+    </div>
+  </div>
+
+</ion-content>

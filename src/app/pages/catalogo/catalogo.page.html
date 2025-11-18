@@ -1,0 +1,122 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Catálogo de Planes</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="router.navigate(['/home'])">
+        <ion-icon name="home-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+  <!-- Bienvenida -->
+  <div class="welcome-section">
+    <h2>¡Hola, {{ usuarioNombre }}!</h2>
+    <p>Encuentra el plan móvil perfecto para ti</p>
+  </div>
+
+  <!-- Filtros -->
+  <div class="filters-container">
+    <ion-searchbar 
+      [(ngModel)]="busqueda" 
+      (ionInput)="aplicarFiltros()" 
+      placeholder="Buscar plan, datos, minutos..." 
+      animated="true"
+      class="searchbar-custom">
+      <ion-button slot="end" fill="clear" (click)="limpiarBusqueda()" *ngIf="busqueda">
+        <ion-icon name="close-circle" color="medium"></ion-icon>
+      </ion-button>
+    </ion-searchbar>
+
+    <div class="filter-row">
+      <ion-segment [(ngModel)]="filtroVelocidad" (ionChange)="aplicarFiltros()" class="segment-small">
+        <ion-segment-button value="todos"><ion-label>Todos</ion-label></ion-segment-button>
+        <ion-segment-button value="4G"><ion-label>4G</ion-label></ion-segment-button>
+        <ion-segment-button value="5G"><ion-label>5G</ion-label></ion-segment-button>
+      </ion-segment>
+
+      <ion-segment [(ngModel)]="filtroOrden" (ionChange)="aplicarFiltros()" class="segment-small">
+        <ion-segment-button value="destacado"><ion-icon name="star"></ion-icon></ion-segment-button>
+        <ion-segment-button value="precio-asc"><ion-icon name="trending-up-outline"></ion-icon></ion-segment-button>
+        <ion-segment-button value="precio-desc"><ion-icon name="trending-down-outline"></ion-icon></ion-segment-button>
+        <ion-segment-button value="nombre"><ion-icon name="text-outline"></ion-icon></ion-segment-button>
+      </ion-segment>
+    </div>
+  </div>
+
+  <!-- Contador -->
+  <div class="results-count" *ngIf="!cargando">
+    <small>{{ getTotalPlanes() }} plan{{ getTotalPlanes() !== 1 ? 'es' : '' }} disponible{{ getTotalPlanes() !== 1 ? 's' : '' }}</small>
+  </div>
+
+  <!-- Loading -->
+  <div class="loading-container" *ngIf="cargando">
+    <ion-spinner name="crescent" color="primary"></ion-spinner>
+    <p>Cargando los mejores planes...</p>
+  </div>
+
+  <ion-refresher slot="fixed" (ionRefresh)="refrescar($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <!-- Grid de planes -->
+  <div class="planes-grid">
+    <ion-card 
+      class="plan-card" 
+      *ngFor="let plan of planesFiltrados" 
+      button 
+      (click)="verDetallePlan(plan)">
+
+      <!-- IMAGEN CON ZOOM AL TOCAR -->
+      <div class="card-image-container" (click)="verImagenGrande(plan, $event)">
+        <img [src]="getPlanImageUrl(plan)" alt="{{ plan.nombre }}" />
+        <div class="zoom-overlay">
+          <ion-icon name="expand-outline"></ion-icon>
+        </div>
+        <ion-badge color="warning" class="badge-destacado" *ngIf="plan.destacado">
+          <ion-icon name="star"></ion-icon> Destacado
+        </ion-badge>
+      </div>
+
+      <ion-card-header>
+        <ion-card-title>{{ plan.nombre }}</ion-card-title>
+        <ion-card-subtitle>
+          <strong class="precio">${{ plan.precio.toFixed(2) }}</strong> <small>/mes</small>
+        </ion-card-subtitle>
+      </ion-card-header>
+
+      <ion-card-content>
+        <p class="descripcion">{{ plan.descripcion }}</p>
+        
+        <div class="features">
+          <div class="feature-item">
+            <ion-icon name="wifi-outline" color="primary"></ion-icon>
+            <span>{{ plan.datos }}</span>
+          </div>
+          <div class="feature-item">
+            <ion-icon name="call-outline" color="success"></ion-icon>
+            <span>{{ plan.minutos }}</span>
+          </div>
+          <div class="feature-item">
+            <ion-icon name="chatbubble-outline" color="tertiary"></ion-icon>
+            <span>{{ plan.sms }}</span>
+          </div>
+          <div class="feature-item" *ngIf="plan.velocidad">
+            <ion-icon name="flash-outline" color="warning"></ion-icon>
+            <span>{{ plan.velocidad }}</span>
+          </div>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </div>
+
+  <!-- Sin resultados -->
+  <div class="empty-state" *ngIf="!cargando && planesFiltrados.length === 0">
+    <ion-icon name="sad-outline" color="medium" size="large"></ion-icon>
+    <h3>No se encontraron planes</h3>
+    <p>Intenta con otros filtros o palabras clave</p>
+  </div>
+
+</ion-content>

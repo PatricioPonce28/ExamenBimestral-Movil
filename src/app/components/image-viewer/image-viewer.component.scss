@@ -1,0 +1,160 @@
+.image-viewer-container {
+  width: 100%;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.95);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+// ========================================
+// HEADER
+// ========================================
+.viewer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  z-index: 10;
+
+  .header-info {
+    flex: 1;
+    color: white;
+
+    h3 {
+      margin: 0 0 5px;
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    p {
+      margin: 0;
+      font-size: 13px;
+      opacity: 0.7;
+    }
+  }
+
+  .close-button {
+    --color: white;
+    --padding-start: 8px;
+    --padding-end: 8px;
+
+    ion-icon {
+      font-size: 28px;
+    }
+  }
+}
+
+// ========================================
+// IMAGEN
+// ========================================
+.image-container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: auto;
+  padding: 20px;
+  position: relative;
+
+  .viewer-image {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    transition: transform 0.3s ease;
+    cursor: move;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+  }
+}
+
+// ========================================
+// CONTROLES
+// ========================================
+.viewer-controls {
+  padding: 15px 20px 25px;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  z-index: 10;
+
+  .zoom-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 15px;
+
+    ion-button {
+      --color: white;
+      --background: rgba(255, 255, 255, 0.1);
+      --border-radius: 50%;
+      width: 44px;
+      height: 44px;
+
+      &[disabled] {
+        opacity: 0.3;
+      }
+
+      ion-icon {
+        font-size: 24px;
+      }
+    }
+
+    ion-chip {
+      min-width: 80px;
+      cursor: pointer;
+      font-weight: 600;
+      
+      &:active {
+        transform: scale(0.95);
+      }
+    }
+  }
+
+  .action-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+
+    ion-button {
+      --color: white;
+      --border-color: rgba(255, 255, 255, 0.3);
+      flex: 1;
+      max-width: 180px;
+
+      ion-icon {
+        font-size: 18px;
+      }
+    }
+  }
+}
+
+// ========================================
+// RESPONSIVE
+// ========================================
+@media (min-width: 768px) {
+  .viewer-header {
+    padding: 25px 40px;
+
+    .header-info h3 {
+      font-size: 22px;
+    }
+
+    .header-info p {
+      font-size: 15px;
+    }
+  }
+
+  .image-container {
+    padding: 40px;
+  }
+
+  .viewer-controls {
+    padding: 20px 40px 30px;
+  }
+}

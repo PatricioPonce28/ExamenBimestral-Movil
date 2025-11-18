@@ -1,0 +1,53 @@
+<div class="image-viewer-container">
+  <!-- Header -->
+  <div class="viewer-header">
+    <div class="header-info">
+      <h3>{{ title }}</h3>
+      <p *ngIf="subtitle">{{ subtitle }}</p>
+    </div>
+    <ion-button fill="clear" (click)="cerrar()" class="close-button">
+      <ion-icon name="close" slot="icon-only"></ion-icon>
+    </ion-button>
+  </div>
+
+  <!-- Imagen con zoom -->
+  <div class="image-container">
+    <img 
+      [src]="imageUrl" 
+      [alt]="title"
+      [style.transform]="'scale(' + zoomLevel + ')'"
+      class="viewer-image"
+    />
+  </div>
+
+  <!-- Controles inferiores -->
+  <div class="viewer-controls">
+    <!-- Zoom controls -->
+    <div class="zoom-controls">
+      <ion-button fill="clear" (click)="zoomOut()" [disabled]="zoomLevel <= minZoom">
+        <ion-icon name="remove-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+      
+      <ion-chip color="primary" (click)="resetZoom()">
+        <ion-label>{{ (zoomLevel * 100).toFixed(0) }}%</ion-label>
+      </ion-chip>
+      
+      <ion-button fill="clear" (click)="zoomIn()" [disabled]="zoomLevel >= maxZoom">
+        <ion-icon name="add-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </div>
+
+    <!-- Action buttons -->
+    <div class="action-buttons">
+      <ion-button fill="outline" size="small" (click)="compartir()">
+        <ion-icon name="share-social-outline" slot="start"></ion-icon>
+        Compartir
+      </ion-button>
+      
+      <ion-button fill="outline" size="small" (click)="descargar()">
+        <ion-icon name="download-outline" slot="start"></ion-icon>
+        Descargar
+      </ion-button>
+    </div>
+  </div>
+</div>

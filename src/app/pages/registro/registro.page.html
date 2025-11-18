@@ -1,0 +1,156 @@
+<ion-header class="ion-no-border" [translucent]="true">
+  <ion-toolbar color="transparent">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content fullscreen class="register-bg">
+
+  <div class="register-master-wrapper">
+
+    <!-- Logo + Nombre -->
+    <div class="brand-container">
+      <div class="logo-backdrop">
+        <ion-icon name="phone-portrait" class="main-logo"></ion-icon>
+      </div>
+      <h1>Tigo Conecta</h1>
+      <p class="tagline">Únete y descubre los mejores planes móviles</p>
+    </div>
+
+    <!-- Tarjeta de registro -->
+    <div class="register-card-elevated">
+
+      <h2>Crea tu cuenta</h2>
+      <p class="welcome-text">Completa los datos para comenzar</p>
+
+      <!-- Selector Usuario / Asesor -->
+      <ion-segment 
+        [(ngModel)]="tipoRegistro" 
+        (ionChange)="cambiarTipoRegistro($any($event).detail.value)"
+        mode="md"
+        class="role-segment">
+        <ion-segment-button value="usuario">
+          <ion-label>Usuario</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="asesor">
+          <ion-label>Asesor Comercial</ion-label>
+        </ion-segment-button>
+      </ion-segment>
+
+      <form (ngSubmit)="registrar()" class="register-form">
+
+        <!-- Nombre completo -->
+        <ion-item class="modern-input" lines="none">
+          <ion-icon name="person" slot="start"></ion-icon>
+          <ion-label position="floating">Nombre completo</ion-label>
+          <ion-input 
+            [(ngModel)]="displayName" 
+            name="displayName"
+            type="text" 
+            required 
+            placeholder="Juan Pérez">
+          </ion-input>
+        </ion-item>
+
+        <!-- Email -->
+        <ion-item class="modern-input" lines="none">
+          <ion-icon name="mail" slot="start"></ion-icon>
+          <ion-label position="floating">Correo electrónico</ion-label>
+          <ion-input 
+            [(ngModel)]="email" 
+            name="email"
+            type="email" 
+            required 
+            placeholder="juan@tigo.com">
+          </ion-input>
+        </ion-item>
+
+        <!-- Contraseña -->
+        <ion-item class="modern-input" lines="none">
+          <ion-icon name="lock-closed" slot="start"></ion-icon>
+          <ion-label position="floating">Contraseña</ion-label>
+          <ion-input 
+            [(ngModel)]="password" 
+            name="password"
+            [type]="showPassword ? 'text' : 'password'" 
+            required>
+          </ion-input>
+          <ion-icon 
+            slot="end"
+            [name]="showPassword ? 'eye-off' : 'eye'"
+            (click)="togglePassword()"
+            class="eye-icon">
+          </ion-icon>
+        </ion-item>
+
+        <!-- Confirmar contraseña -->
+        <ion-item class="modern-input" lines="none">
+          <ion-icon name="lock-closed" slot="start"></ion-icon>
+          <ion-label position="floating">Confirmar contraseña</ion-label>
+          <ion-input 
+            [(ngModel)]="confirmPassword" 
+            name="confirmPassword"
+            [type]="showConfirmPassword ? 'text' : 'password'" 
+            required>
+          </ion-input>
+          <ion-icon 
+            slot="end"
+            [name]="showConfirmPassword ? 'eye-off' : 'eye'"
+            (click)="toggleConfirmPassword()"
+            class="eye-icon">
+          </ion-icon>
+        </ion-item>
+
+        <!-- Código de administrador (solo asesores) -->
+        <div *ngIf="tipoRegistro === 'asesor'">
+          <ion-item class="modern-input" lines="none">
+            <ion-icon name="key" slot="start"></ion-icon>
+            <ion-label position="floating">Código de administrador</ion-label>
+            <ion-input 
+              [(ngModel)]="codigoAdmin" 
+              name="codigoAdmin"
+              type="text" 
+              required 
+              placeholder="Ingresa tu código">
+            </ion-input>
+          </ion-item>
+        </div>
+
+        <!-- Términos y condiciones -->
+        <ion-item lines="none" class="checkbox-terms">
+          <ion-checkbox [(ngModel)]="aceptaTerminos" name="aceptaTerminos" required slot="start"></ion-checkbox>
+          <ion-label class="terms-label">
+            Acepto los <span >términos y condiciones</span> y la <span >política de privacidad</span>
+          </ion-label>
+        </ion-item>
+
+        <!-- Botón Registrarme -->
+        <ion-button 
+          type="submit"
+          expand="block" 
+          class="tigo-btn-register"
+          [disabled]="!aceptaTerminos || !displayName || !email || !password || !confirmPassword">
+          <ion-icon name="person-add" slot="start"></ion-icon>
+          Crear cuenta gratis
+        </ion-button>
+
+      </form>
+
+      <div class="login-prompt">
+        <span>¿Ya tienes cuenta? </span>
+        <ion-button fill="clear" class="login-now" (click)="volverLogin()">
+          Iniciar sesión
+        </ion-button>
+      </div>
+
+    </div>
+
+    <div class="footer-copy">
+      <small>© 2025 Tigo Conecta • Todos los derechos reservados</small>
+    </div>
+
+  </div>
+
+</ion-content>

@@ -1,0 +1,240 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Panel Asesor</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="logout()">
+        <ion-icon name="log-out-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+
+  <!-- Barra de saludo -->
+  <ion-toolbar color="primary">
+    <ion-title size="small">
+      Hola, {{ usuarioNombre }} 👋
+    </ion-title>
+  </ion-toolbar>
+
+  <!-- Pestañas de navegación -->
+  <ion-toolbar>
+    <ion-segment [(ngModel)]="vistaActual" (ionChange)="cambiarVista($event)">
+      <ion-segment-button value="planes">
+        <ion-icon name="apps-outline"></ion-icon>
+        <ion-label>Planes</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="chats">
+        <ion-icon name="chatbubbles-outline"></ion-icon>
+        <ion-label>Chats</ion-label>
+        <ion-badge *ngIf="chatsActivos.length > 0" color="danger">{{ chatsActivos.length }}</ion-badge>
+      </ion-segment-button>
+      <ion-segment-button value="contrataciones">
+        <ion-icon name="document-text-outline"></ion-icon>
+        <ion-label>Contratos</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <!-- Refresher -->
+  <ion-refresher slot="fixed" (ionRefresh)="refrescar($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <!-- ============================================ -->
+  <!-- VISTA: GESTIÓN DE PLANES -->
+  <!-- ============================================ -->
+  <div *ngIf="vistaActual === 'planes'" class="vista-planes">
+    <!-- Barra de búsqueda y filtros -->
+    <ion-toolbar class="toolbar-busqueda">
+      <ion-searchbar
+        [(ngModel)]="busqueda"
+        (ionInput)="filtrarPlanes()"
+        (ionClear)="limpiarBusqueda()"
+        placeholder="Buscar planes..."
+        animated
+        debounce="500">
+      </ion-searchbar>
+    </ion-toolbar>
+
+    <ion-toolbar class="toolbar-filtros">
+      <ion-segment [(ngModel)]="filtroActivo" (ionChange)="filtrarPlanes()" scrollable>
+        <ion-segment-button value="todos">
+          <ion-label>Todos</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="activos">
+          <ion-label>Activos</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="inactivos">
+          <ion-label>Inactivos</ion-label>
+        </ion-segment-button>
+      </ion-segment>
+    </ion-toolbar>
+
+    <!-- Loading -->
+    <div *ngIf="cargando" class="loading-container">
+      <ion-spinner name="crescent" color="primary"></ion-spinner>
+      <p>Cargando planes...</p>
+    </div>
+
+    <!-- Sin planes -->
+    <div *ngIf="!cargando && planes.length === 0" class="empty-state">
+      <ion-icon name="folder-open-outline" color="medium"></ion-icon>
+      <h2>No hay planes</h2>
+      <p *ngIf="busqueda">No se encontraron planes con tu búsqueda</p>
+      <p *ngIf="!busqueda">Aún no has creado ningún plan</p>
+      <ion-button (click)="crearPlan()" color="primary">
+        <ion-icon name="add-outline" slot="start"></ion-icon>
+        Crear Primer Plan
+      </ion-button>
+    </div>
+
+    <!-- Lista de planes -->
+    <ion-list *ngIf="!cargando && planes.length > 0" class="lista-planes">
+      <ion-item-sliding *ngFor="let plan of planes">
+        <ion-item>
+          <!-- Imagen del plan -->
+          <ion-thumbnail slot="start">
+            <img [src]="plan.imagenUrl || 'assets/images/plan-default.jpg'" [alt]="plan.nombre">
+          </ion-thumbnail>
+
+          <ion-label>
+            <h2>{{ plan.nombre }}</h2>
+            <p class="descripcion">{{ plan.descripcion }}</p>
+            <div class="plan-info">
+              <ion-badge color="primary">${{ plan.precio.toFixed(2) }}/mes</ion-badge>
+              <ion-badge [color]="plan.activo ? 'success' : 'medium'">
+                {{ plan.activo ? 'Activo' : 'Inactivo' }}
+              </ion-badge>
+              <ion-badge *ngIf="plan.destacado" color="warning">⭐ Destacado</ion-badge>
+            </div>
+            <div class="plan-detalles">
+              <span>📊 {{ plan.datos }}</span>
+              <span>📞 {{ plan.minutos }}</span>
+              <span>💬 {{ plan.sms }}</span>
+            </div>
+          </ion-label>
+
+          <ion-button slot="end" fill="clear" (click)="mostrarOpcionesPlan(plan)">
+            <ion-icon name="ellipsis-vertical" color="medium"></ion-icon>
+          </ion-button>
+        </ion-item>
+
+        <!-- Opciones deslizables -->
+        <ion-item-options side="end">
+          <ion-item-option color="primary" (click)="editarPlan(plan)">
+            <ion-icon name="create-outline"></ion-icon>
+            Editar
+          </ion-item-option>
+          <ion-item-option color="danger" (click)="eliminarPlan(plan)">
+            <ion-icon name="trash-outline"></ion-icon>
+            Eliminar
+          </ion-item-option>
+        </ion-item-options>
+      </ion-item-sliding>
+    </ion-list>
+
+    <!-- FAB para crear plan -->
+    <ion-fab vertical="bottom" horizontal="end" slot="fixed" *ngIf="!cargando">
+      <ion-fab-button color="primary" (click)="crearPlan()">
+        <ion-icon name="add"></ion-icon>
+      </ion-fab-button>
+    </ion-fab>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- VISTA: CHATS ACTIVOS -->
+  <!-- ============================================ -->
+  <div *ngIf="vistaActual === 'chats'" class="vista-chats">
+    <!-- Loading -->
+    <div *ngIf="chatsActivos.length === 0" class="empty-state">
+      <ion-icon name="chatbubbles-outline" color="medium"></ion-icon>
+      <h2>No hay chats activos</h2>
+      <p>Los chats con usuarios aparecerán aquí</p>
+    </div>
+
+    <!-- Lista de chats -->
+    <ion-list *ngIf="chatsActivos.length > 0" class="lista-chats">
+      <ion-item 
+        *ngFor="let chat of chatsActivos" 
+        (click)="abrirChat(chat)"
+        button
+        detail>
+        <ion-avatar slot="start">
+          <div class="avatar-placeholder">
+            {{ (chat.usuarioNombre || 'U').charAt(0).toUpperCase() }}
+          </div>
+        </ion-avatar>
+
+        <ion-label>
+          <h2>{{ chat.usuarioNombre || 'Usuario' }}</h2>
+          <p class="ultimo-mensaje">{{ chat.ultimoMensaje || 'Nuevo chat' }}</p>
+          <p class="fecha-chat">{{ formatearFechaChat(chat.timestamp) }}</p>
+        </ion-label>
+
+        <ion-badge *ngIf="chat.mensajesNoLeidos > 0" color="danger" slot="end">
+          {{ chat.mensajesNoLeidos }}
+        </ion-badge>
+      </ion-item>
+    </ion-list>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- VISTA: CONTRATACIONES -->
+  <!-- ============================================ -->
+  <div *ngIf="vistaActual === 'contrataciones'" class="vista-contrataciones">
+    <!-- Loading -->
+    <div *ngIf="cargandoContrataciones" class="loading-container">
+      <ion-spinner name="crescent" color="primary"></ion-spinner>
+      <p>Cargando contrataciones...</p>
+    </div>
+
+    <!-- Sin contrataciones -->
+    <div *ngIf="!cargandoContrataciones && contrataciones.length === 0" class="empty-state">
+      <ion-icon name="document-text-outline" color="medium"></ion-icon>
+      <h2>No hay contrataciones</h2>
+      <p>Aún no hay planes contratados</p>
+    </div>
+
+    <!-- Lista de contrataciones -->
+    <ion-list *ngIf="!cargandoContrataciones && contrataciones.length > 0" class="lista-contrataciones">
+      <ion-item 
+        *ngFor="let contratacion of contrataciones" 
+        (click)="verDetalleContratacion(contratacion)"
+        button
+        detail>
+        
+        <ion-icon name="checkmark-circle" slot="start" color="success"></ion-icon>
+
+        <ion-label>
+          <h2>{{ contratacion.planNombre }}</h2>
+          <p class="usuario-nombre">👤 {{ contratacion.usuarioNombre }}</p>
+          <p class="contratacion-email">📧 {{ contratacion.usuarioEmail }}</p>
+          <div class="contratacion-info">
+            <ion-badge color="success">✅ Contratado</ion-badge>
+            <ion-badge color="primary">${{ contratacion.planPrecio?.toFixed(2) }}/mes</ion-badge>
+          </div>
+          <p class="fecha-contratacion">{{ formatearFechaContratacion(contratacion.createdAt) }}</p>
+        </ion-label>
+      </ion-item>
+    </ion-list>
+
+    <!-- Resumen estadístico -->
+    <div *ngIf="!cargandoContrataciones && contrataciones.length > 0" class="resumen-estadistico">
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>📊 Resumen</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <div class="estadistica-item">
+            <ion-icon name="document-text-outline" color="primary"></ion-icon>
+            <span>Total de contrataciones: <strong>{{ contrataciones.length }}</strong></span>
+          </div>
+        </ion-card-content>
+      </ion-card>
+    </div>
+  </div>
+</ion-content>
